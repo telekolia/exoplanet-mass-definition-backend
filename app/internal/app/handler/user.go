@@ -15,7 +15,7 @@ func (h *Handler) RegisterUserAPI(ctx *gin.Context) {
 	}
 	request.Login = strings.TrimSpace(request.Login)
 	if request.Login == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "логин не может быть пустым"})
+		ctx.Status(http.StatusBadRequest)
 		return
 	}
 	user, err := h.Repository.RegisterUser(ctx.Request.Context(), request.Login, request.Password)
@@ -23,13 +23,13 @@ func (h *Handler) RegisterUserAPI(ctx *gin.Context) {
 		h.repositoryError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": user, "message": "пользователь зарегистрирован"})
+	ctx.JSON(http.StatusCreated, user)
 }
 
 func (h *Handler) LoginUserAPI(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotImplemented, gin.H{"status": "fail", "message": "аутентификация будет реализована в лабораторной 4; сейчас используется фиксированный пользователь"})
+	ctx.Status(http.StatusNotImplemented)
 }
 
 func (h *Handler) LogoutUserAPI(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotImplemented, gin.H{"status": "fail", "message": "деавторизация будет реализована в лабораторной 4; текущий пользователь не меняется"})
+	ctx.Status(http.StatusNotImplemented)
 }

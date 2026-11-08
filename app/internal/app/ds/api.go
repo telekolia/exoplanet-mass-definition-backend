@@ -16,7 +16,7 @@ type RegisterUserRequest struct {
 }
 type TelescopeSerializer struct {
 	Telescope
-	IsCreator  int    `json:"is_creator"`
+	IsCreator  bool   `json:"is_creator"`
 	LikesCount int64  `json:"likes_count"`
 	ImageName  string `json:"image_name"`
 	VideoName  string `json:"video_name"`
@@ -24,6 +24,5 @@ type TelescopeSerializer struct {
 
 type FullTelescopeSerializer struct {
 	TelescopeSerializer
-	Creator User `json:"creator"`
-	IsLiked int  `json:"is_liked"`
+	IsLiked int `json:"is_liked"`
 }

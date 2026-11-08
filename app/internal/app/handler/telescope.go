@@ -55,12 +55,10 @@ func (h *Handler) RegisterStatic(router *gin.Engine) {
 }
 
 func (h *Handler) errorHandler(ctx *gin.Context, code int, err error) {
-	message := err.Error()
 	if code >= 500 {
 		logrus.Error(err)
-		message = "внутренняя ошибка сервера"
 	}
-	ctx.JSON(code, gin.H{"status": "fail", "message": message})
+	ctx.Status(code)
 }
 
 func (h *Handler) repositoryError(ctx *gin.Context, err error) {
@@ -146,7 +144,7 @@ func (h *Handler) GetTelescopesAPI(ctx *gin.Context) {
 		item := h.serializeTelescope(telescope, user.ID, counts[telescope.ID])
 		data = append(data, item)
 	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
+	ctx.JSON(http.StatusOK, data)
 }
 
 func (h *Handler) GetTelescopeFeedAPI(ctx *gin.Context) {
@@ -188,18 +186,18 @@ func (h *Handler) GetTelescopeFeedAPI(ctx *gin.Context) {
 		return
 	}
 	item := h.serializeTelescope(telescope, user.ID, count)
-	full := ds.FullTelescopeSerializer{TelescopeSerializer: item, Creator: telescope.Creator}
+	full := ds.FullTelescopeSerializer{TelescopeSerializer: item}
 	if liked {
 		full.IsLiked = 1
 	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": full})
+	ctx.JSON(http.StatusOK, full)
 }
 
 func (h *Handler) GetTelescopeDraftAPI(ctx *gin.Context) {
 	user := session.GetCurrentUser()
 	telescope, err := h.Repository.GetTelescopeDraft(ctx.Request.Context(), user.ID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": nil})
+		ctx.JSON(http.StatusOK, nil)
 		return
 	}
 	if err != nil {
@@ -207,7 +205,7 @@ func (h *Handler) GetTelescopeDraftAPI(ctx *gin.Context) {
 		return
 	}
 	item := h.serializeTelescope(telescope, user.ID, 0)
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": item})
+	ctx.JSON(http.StatusOK, item)
 }
 
 func (h *Handler) CreateTelescopeDraftAPI(ctx *gin.Context) {
@@ -262,7 +260,7 @@ func (h *Handler) CreateTelescopeDraftAPI(ctx *gin.Context) {
 	}
 	item := h.serializeTelescope(telescope, user.ID, 0)
 	ctx.Header("Location", "/api/telescopes/draft")
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": item, "message": "черновик создан"})
+	ctx.JSON(http.StatusCreated, item)
 }
 
 func (h *Handler) formFile(ctx *gin.Context, name string) (*multipart.FileHeader, bool) {
@@ -306,7 +304,7 @@ func (h *Handler) PublishTelescopeAPI(ctx *gin.Context) {
 		return
 	}
 	item := h.serializeTelescope(telescope, user.ID, 0)
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": item, "message": "телескоп опубликован"})
+	ctx.JSON(http.StatusOK, item)
 }
 
 func (h *Handler) DeleteTelescopeAPI(ctx *gin.Context) {
@@ -319,7 +317,7 @@ func (h *Handler) DeleteTelescopeAPI(ctx *gin.Context) {
 		h.repositoryError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "телескоп удалён"})
+	ctx.Status(http.StatusOK)
 }
 
 func (h *Handler) LikeTelescopeAPI(ctx *gin.Context) {
@@ -337,5 +335,5 @@ func (h *Handler) LikeTelescopeAPI(ctx *gin.Context) {
 		h.repositoryError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"is_liked": *request.Like, "likes_count": count}})
+	ctx.JSON(http.StatusOK, gin.H{"is_liked": *request.Like, "likes_count": count})
 }

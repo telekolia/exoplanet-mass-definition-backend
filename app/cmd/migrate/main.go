@@ -26,6 +26,11 @@ func main() {
 	if err != nil {
 		panic("cant migrate db")
 	}
+	if db.Migrator().HasColumn(&ds.Telescope{}, "completion_time") {
+		if err := db.Migrator().DropColumn(&ds.Telescope{}, "completion_time"); err != nil {
+			panic(err)
+		}
+	}
 	user := session.GetCurrentUser()
 	err = db.First(&user, user.ID).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {

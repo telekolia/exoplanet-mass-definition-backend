@@ -27,7 +27,7 @@ func (r *Repository) GetTelescopeDraft(ctx context.Context, userID uint) (ds.Tel
 }
 func (r *Repository) GetTelescopeFeedItem(ctx context.Context, currentID uint, next bool) (ds.Telescope, error) {
 	var telescope ds.Telescope
-	query := r.db.WithContext(ctx).Preload("Creator").Where("status = ?", ds.TelescopePublished)
+	query := r.db.WithContext(ctx).Where("status = ?", ds.TelescopePublished)
 	if currentID == 0 {
 		return telescopeFirst(query, &telescope)
 	}
@@ -41,7 +41,7 @@ func (r *Repository) GetTelescopeFeedItem(ctx context.Context, currentID uint, n
 	}
 	err := query.Where("id > ?", currentID).Order("id asc").First(&telescope).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return telescopeFirst(r.db.WithContext(ctx).Preload("Creator").Where("status = ?", ds.TelescopePublished), &telescope)
+		return telescopeFirst(r.db.WithContext(ctx).Where("status = ?", ds.TelescopePublished), &telescope)
 	}
 	return telescope, err
 }
@@ -148,6 +148,6 @@ func (r *Repository) DeleteTelescope(ctx context.Context, id, userID uint) error
 			return ErrConflict
 		}
 		return tx.Model(&ds.Telescope{}).Where("id = ?", id).
-			Updates(map[string]interface{}{"status": ds.TelescopeDeleted, "completion_time": time.Now()}).Error
+			Update("status", ds.TelescopeDeleted).Error
 	})
 }
