@@ -22,26 +22,29 @@ import (
 
 type Handler struct {
 	Repository *repository.Repository
+	tokens     *session.Tokens
 }
 
-func NewHandler(r *repository.Repository) *Handler {
-	return &Handler{Repository: r}
+func NewHandler(r *repository.Repository, tokens *session.Tokens) *Handler {
+	return &Handler{Repository: r, tokens: tokens}
 }
 
 func (h *Handler) RegisterHandler(router *gin.Engine) {
 	binding.EnableDecoderDisallowUnknownFields = true
 	router.HandleMethodNotAllowed = true
 	api := router.Group("/api")
-	api.GET("/telescopes", h.GetTelescopesAPI)
-	api.GET("/telescopes/feed", h.GetTelescopeFeedAPI)
-	api.GET("/telescopes/draft", h.GetTelescopeDraftAPI)
-	api.POST("/telescopes", h.CreateTelescopeDraftAPI)
-	api.PUT("/telescopes/:id", h.PublishTelescopeAPI)
-	api.DELETE("/telescopes/:id", h.DeleteTelescopeAPI)
-	api.POST("/telescopes/:id/likes", h.LikeTelescopeAPI)
+	optionalAuth := h.authenticate(false)
+	requireAuth := h.authenticate(true)
+	api.GET("/telescopes", optionalAuth, h.GetTelescopesAPI)
+	api.GET("/telescopes/feed", optionalAuth, h.GetTelescopeFeedAPI)
+	api.GET("/telescopes/draft", requireAuth, h.GetTelescopeDraftAPI)
+	api.POST("/telescopes", requireAuth, h.CreateTelescopeDraftAPI)
+	api.PUT("/telescopes/:id", requireAuth, h.PublishTelescopeAPI)
+	api.DELETE("/telescopes/:id", requireAuth, h.DeleteTelescopeAPI)
+	api.POST("/telescopes/:id/likes", requireAuth, h.LikeTelescopeAPI)
 	api.POST("/users", h.RegisterUserAPI)
 	api.POST("/users/login", h.LoginUserAPI)
-	api.POST("/users/logout", h.LogoutUserAPI)
+	api.POST("/users/logout", requireAuth, h.LogoutUserAPI)
 	router.NoRoute(func(ctx *gin.Context) {
 		h.errorHandler(ctx, http.StatusNotFound, errors.New("маршрут не найден"))
 	})
@@ -101,6 +104,18 @@ func (h *Handler) bindJSON(ctx *gin.Context, request interface{}) bool {
 	return true
 }
 
+// @Summary Список опубликованных телескопов
+// @Tags Телескопы
+// @Produce json
+// @Param min query number false "Минимальная широта" default(-90)
+// @Param max query number false "Максимальная широта" default(90)
+// @Param Authorization header string false "Bearer JWT для определения владельца"
+// @Success 200 {array} ds.TelescopeSerializer
+// @Failure 400
+// @Failure 401
+// @Failure 500
+// @Failure 503
+// @Router /telescopes [get]
 func (h *Handler) GetTelescopesAPI(ctx *gin.Context) {
 	minLatitude, maxLatitude := -90.0, 90.0
 	for _, bound := range []struct {
@@ -138,15 +153,28 @@ func (h *Handler) GetTelescopesAPI(ctx *gin.Context) {
 		h.repositoryError(ctx, err)
 		return
 	}
-	user := session.GetCurrentUser()
+	userID := currentUserID(ctx)
 	data := make([]ds.TelescopeSerializer, 0, len(telescopes))
 	for _, telescope := range telescopes {
-		item := h.serializeTelescope(telescope, user.ID, counts[telescope.ID])
+		item := h.serializeTelescope(telescope, userID, counts[telescope.ID])
 		data = append(data, item)
 	}
 	ctx.JSON(http.StatusOK, data)
 }
 
+// @Summary Карточка ленты
+// @Tags Телескопы
+// @Produce json
+// @Param id query integer false "ID карточки; без ID возвращается первая"
+// @Param next query boolean false "Следующая карточка после id"
+// @Param Authorization header string false "Bearer JWT для определения владельца и лайка"
+// @Success 200 {object} ds.FullTelescopeSerializer
+// @Failure 400
+// @Failure 401
+// @Failure 404
+// @Failure 500
+// @Failure 503
+// @Router /telescopes/feed [get]
 func (h *Handler) GetTelescopeFeedAPI(ctx *gin.Context) {
 	var id uint
 	if values, exists := ctx.Request.URL.Query()["id"]; exists {
@@ -174,18 +202,21 @@ func (h *Handler) GetTelescopeFeedAPI(ctx *gin.Context) {
 		h.repositoryError(ctx, err)
 		return
 	}
-	user := session.GetCurrentUser()
+	userID := currentUserID(ctx)
 	count, err := h.Repository.GetTelescopeLikesCount(ctx.Request.Context(), telescope.ID)
 	if err != nil {
 		h.repositoryError(ctx, err)
 		return
 	}
-	liked, err := h.Repository.IsTelescopeLiked(ctx.Request.Context(), telescope.ID, user.ID)
-	if err != nil {
-		h.repositoryError(ctx, err)
-		return
+	liked := false
+	if userID != 0 {
+		liked, err = h.Repository.IsTelescopeLiked(ctx.Request.Context(), telescope.ID, userID)
+		if err != nil {
+			h.repositoryError(ctx, err)
+			return
+		}
 	}
-	item := h.serializeTelescope(telescope, user.ID, count)
+	item := h.serializeTelescope(telescope, userID, count)
 	full := ds.FullTelescopeSerializer{TelescopeSerializer: item}
 	if liked {
 		full.IsLiked = 1
@@ -193,9 +224,19 @@ func (h *Handler) GetTelescopeFeedAPI(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, full)
 }
 
+// @Summary Черновик текущего пользователя
+// @Description Возвращает null, если черновика нет.
+// @Tags Телескопы
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} ds.TelescopeSerializer
+// @Failure 401
+// @Failure 500
+// @Failure 503
+// @Router /telescopes/draft [get]
 func (h *Handler) GetTelescopeDraftAPI(ctx *gin.Context) {
-	user := session.GetCurrentUser()
-	telescope, err := h.Repository.GetTelescopeDraft(ctx.Request.Context(), user.ID)
+	userID := currentUserID(ctx)
+	telescope, err := h.Repository.GetTelescopeDraft(ctx.Request.Context(), userID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusOK, nil)
 		return
@@ -204,10 +245,29 @@ func (h *Handler) GetTelescopeDraftAPI(ctx *gin.Context) {
 		h.repositoryError(ctx, err)
 		return
 	}
-	item := h.serializeTelescope(telescope, user.ID, 0)
+	item := h.serializeTelescope(telescope, userID, 0)
 	ctx.JSON(http.StatusOK, item)
 }
 
+// @Summary Создание черновика
+// @Tags Телескопы
+// @Accept mpfd
+// @Produce json
+// @Security BearerAuth
+// @Param title formData string true "Название"
+// @Param image formData file false "Изображение до 5 МиБ"
+// @Param video formData file false "Видео до 50 МиБ"
+// @Success 201 {object} ds.TelescopeSerializer
+// @Header 201 {string} Location "Адрес черновика"
+// @Failure 400
+// @Failure 401
+// @Failure 404
+// @Failure 409
+// @Failure 413
+// @Failure 415
+// @Failure 500
+// @Failure 503
+// @Router /telescopes [post]
 func (h *Handler) CreateTelescopeDraftAPI(ctx *gin.Context) {
 	if ctx.ContentType() != "multipart/form-data" {
 		h.errorHandler(ctx, http.StatusUnsupportedMediaType, errors.New("ожидается multipart/form-data"))
@@ -252,13 +312,13 @@ func (h *Handler) CreateTelescopeDraftAPI(ctx *gin.Context) {
 	if !ok {
 		return
 	}
-	user := session.GetCurrentUser()
-	telescope, err := h.Repository.CreateDraftTelescope(ctx.Request.Context(), user.ID, title, image, video)
+	userID := currentUserID(ctx)
+	telescope, err := h.Repository.CreateDraftTelescope(ctx.Request.Context(), userID, title, image, video)
 	if err != nil {
 		h.repositoryError(ctx, err)
 		return
 	}
-	item := h.serializeTelescope(telescope, user.ID, 0)
+	item := h.serializeTelescope(telescope, userID, 0)
 	ctx.Header("Location", "/api/telescopes/draft")
 	ctx.JSON(http.StatusCreated, item)
 }
@@ -283,6 +343,24 @@ func (h *Handler) formFile(ctx *gin.Context, name string) (*multipart.FileHeader
 	return header, true
 }
 
+// @Summary Публикация своего черновика
+// @Tags Телескопы
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path integer true "ID телескопа"
+// @Param body body ds.PublishTelescopeRequest true "Описание и координаты"
+// @Success 200 {object} ds.TelescopeSerializer
+// @Failure 400
+// @Failure 401
+// @Failure 403
+// @Failure 404
+// @Failure 409
+// @Failure 413
+// @Failure 415
+// @Failure 500
+// @Failure 503
+// @Router /telescopes/{id} [put]
 func (h *Handler) PublishTelescopeAPI(ctx *gin.Context) {
 	id, ok := h.requestID(ctx)
 	if !ok {
@@ -297,29 +375,58 @@ func (h *Handler) PublishTelescopeAPI(ctx *gin.Context) {
 		h.errorHandler(ctx, http.StatusBadRequest, errors.New("описание не может быть пустым"))
 		return
 	}
-	user := session.GetCurrentUser()
-	telescope, err := h.Repository.PublishTelescope(ctx.Request.Context(), id, user.ID, request.Description, *request.Latitude, *request.Longitude)
+	userID := currentUserID(ctx)
+	telescope, err := h.Repository.PublishTelescope(ctx.Request.Context(), id, userID, request.Description, *request.Latitude, *request.Longitude)
 	if err != nil {
 		h.repositoryError(ctx, err)
 		return
 	}
-	item := h.serializeTelescope(telescope, user.ID, 0)
+	item := h.serializeTelescope(telescope, userID, 0)
 	ctx.JSON(http.StatusOK, item)
 }
 
+// @Summary Логическое удаление своего телескопа
+// @Tags Телескопы
+// @Security BearerAuth
+// @Param id path integer true "ID телескопа"
+// @Success 200
+// @Failure 400
+// @Failure 401
+// @Failure 403
+// @Failure 404
+// @Failure 409
+// @Failure 500
+// @Failure 503
+// @Router /telescopes/{id} [delete]
 func (h *Handler) DeleteTelescopeAPI(ctx *gin.Context) {
 	id, ok := h.requestID(ctx)
 	if !ok {
 		return
 	}
-	user := session.GetCurrentUser()
-	if err := h.Repository.DeleteTelescope(ctx.Request.Context(), id, user.ID); err != nil {
+	userID := currentUserID(ctx)
+	if err := h.Repository.DeleteTelescope(ctx.Request.Context(), id, userID); err != nil {
 		h.repositoryError(ctx, err)
 		return
 	}
 	ctx.Status(http.StatusOK)
 }
 
+// @Summary Установка или отмена лайка
+// @Tags Телескопы
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path integer true "ID телескопа"
+// @Param body body ds.LikeTelescopeRequest true "1 — поставить, 0 — отменить"
+// @Success 200 {object} ds.LikeTelescopeResponse
+// @Failure 400
+// @Failure 401
+// @Failure 404
+// @Failure 413
+// @Failure 415
+// @Failure 500
+// @Failure 503
+// @Router /telescopes/{id}/likes [post]
 func (h *Handler) LikeTelescopeAPI(ctx *gin.Context) {
 	id, ok := h.requestID(ctx)
 	if !ok {
@@ -329,11 +436,11 @@ func (h *Handler) LikeTelescopeAPI(ctx *gin.Context) {
 	if !h.bindJSON(ctx, &request) {
 		return
 	}
-	user := session.GetCurrentUser()
-	count, err := h.Repository.SetTelescopeLike(ctx.Request.Context(), id, user.ID, *request.Like)
+	userID := currentUserID(ctx)
+	count, err := h.Repository.SetTelescopeLike(ctx.Request.Context(), id, userID, *request.Like)
 	if err != nil {
 		h.repositoryError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"is_liked": *request.Like, "likes_count": count})
+	ctx.JSON(http.StatusOK, ds.LikeTelescopeResponse{IsLiked: *request.Like, LikesCount: count})
 }

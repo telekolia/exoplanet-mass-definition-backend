@@ -10,6 +10,11 @@ type LikeTelescopeRequest struct {
 	Like *int `json:"like" binding:"required,oneof=0 1"`
 }
 
+type LikeTelescopeResponse struct {
+	IsLiked    int   `json:"is_liked"`
+	LikesCount int64 `json:"likes_count"`
+}
+
 type RegisterUserRequest struct {
 	Login    string `json:"login" binding:"required,max=64"`
 	Password string `json:"password" binding:"required,min=6,max=100"`
@@ -20,6 +25,11 @@ type TelescopeSerializer struct {
 	LikesCount int64  `json:"likes_count"`
 	ImageName  string `json:"image_name"`
 	VideoName  string `json:"video_name"`
+}
+
+type LoginRequest struct {
+	Login    string `json:"login" binding:"required,max=64"`
+	Password string `json:"password" binding:"required,max=100"`
 }
 
 type FullTelescopeSerializer struct {

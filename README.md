@@ -51,5 +51,19 @@
 | # Метода | Название HTTP метода | URL эндпоинт | Тело запроса | HTTP код | Описание |
 | --- | --- | --- | --- | --- | --- |
 | 8 | POST | `/api/users` | JSON: `{"login":"new-user","password":"test123"}` | 201 Created | Регистрация пользователя. |
-| 9 | POST | `/api/users/login` | — | 501 Not Implemented | Заглушка аутентификации. |
-| 10 | POST | `/api/users/logout` | — | 501 Not Implemented | Заглушка деавторизации. |
+| 9 | POST | `/api/users/login` | JSON: `{"login":"new-user","password":"test123"}` | 200 OK | Выдача JWT. |
+| 10 | POST | `/api/users/logout` | — | 200 OK | Отзыв текущего JWT. |
+
+### Авторизация и Swagger
+
+Список телескопов и лента доступны гостю. Для черновика, создания, публикации, удаления, лайков и выхода нужен заголовок `Authorization: Bearer <токен>`. Вход и регистрация доступны без токена. Создатель карточки определяется по JWT.
+
+Добавьте в `app/.env` переменную `JWT_SECRET` со случайным секретом длиной не менее 32 байт. Redis по умолчанию доступен на `127.0.0.1:6379`; для другого подключения задайте `REDIS_HOST`, `REDIS_PORT` и при необходимости `REDIS_USER`, `REDIS_PASSWORD`.
+
+Запуск Redis из папки `app`: `docker compose -f compose.redis.yml up -d`. В Swagger по адресу `/swagger/index.html` выполните вход и в **Authorize** вставьте `Bearer <access_token>`.
+
+Обновление Swagger из аннотаций (из папки `app`):
+
+```powershell
+go run github.com/swaggo/swag/cmd/swag@v1.16.6 init -g cmd/app/main.go --parseInternal --outputTypes json -o internal/app/handler/swagger
+```
