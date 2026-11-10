@@ -2,6 +2,7 @@ package handler
 
 import (
 	"app/internal/app/ds"
+	"app/internal/app/session"
 	"crypto/subtle"
 	"errors"
 	"net/http"
@@ -85,15 +86,16 @@ func (h *Handler) LoginUserAPI(ctx *gin.Context) {
 // @Security BearerAuth
 // @Success 200
 // @Failure 401
+// @Failure 403
 // @Failure 503
 // @Router /users/logout [post]
 func (h *Handler) LogoutUserAPI(ctx *gin.Context) {
-	claims := tokenClaims(ctx)
+	claims := session.Claims(ctx)
 	if claims == nil {
 		ctx.Status(http.StatusUnauthorized)
 		return
 	}
-	if err := h.tokens.Revoke(ctx.Request.Context(), claims); err != nil {
+	if err := h.blacklist.WriteJWTToBlacklist(ctx.Request.Context(), claims.ID, claims.ExpiresAt.Time); err != nil {
 		h.errorHandler(ctx, http.StatusServiceUnavailable, err)
 		return
 	}

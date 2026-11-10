@@ -1,0 +1,507 @@
+basePath: /api
+definitions:
+  ds.FullTelescopeSerializer:
+    properties:
+      creation_time:
+        type: string
+      creator_id:
+        type: integer
+      description:
+        type: string
+      forming_time:
+        type: string
+      id:
+        type: integer
+      image_name:
+        type: string
+      image_url:
+        type: string
+      is_creator:
+        type: boolean
+      is_liked:
+        type: integer
+      latitude:
+        type: number
+      likes_count:
+        type: integer
+      longitude:
+        type: number
+      status:
+        type: string
+      title:
+        type: string
+      video_name:
+        type: string
+      video_url:
+        type: string
+    type: object
+  ds.LikeTelescopeRequest:
+    properties:
+      like:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - like
+    type: object
+  ds.LikeTelescopeResponse:
+    properties:
+      is_liked:
+        type: integer
+      likes_count:
+        type: integer
+    type: object
+  ds.LoginRequest:
+    properties:
+      login:
+        maxLength: 64
+        type: string
+      password:
+        maxLength: 100
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  ds.PublishTelescopeRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      latitude:
+        maximum: 90
+        minimum: -90
+        type: number
+      longitude:
+        maximum: 180
+        minimum: -180
+        type: number
+    required:
+    - description
+    - latitude
+    - longitude
+    type: object
+  ds.RegisterUserRequest:
+    properties:
+      login:
+        maxLength: 64
+        type: string
+      password:
+        maxLength: 100
+        minLength: 6
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  ds.TelescopeSerializer:
+    properties:
+      creation_time:
+        type: string
+      creator_id:
+        type: integer
+      description:
+        type: string
+      forming_time:
+        type: string
+      id:
+        type: integer
+      image_name:
+        type: string
+      image_url:
+        type: string
+      is_creator:
+        type: boolean
+      latitude:
+        type: number
+      likes_count:
+        type: integer
+      longitude:
+        type: number
+      status:
+        type: string
+      title:
+        type: string
+      video_name:
+        type: string
+      video_url:
+        type: string
+    type: object
+  ds.User:
+    properties:
+      id:
+        type: integer
+      is_moderator:
+        type: boolean
+      login:
+        type: string
+    type: object
+  session.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      token_type:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: Телескопная API
+  version: "1.0"
+paths:
+  /telescopes:
+    get:
+      parameters:
+      - default: -90
+        description: Минимальная широта
+        in: query
+        name: min
+        type: number
+      - default: 90
+        description: Максимальная широта
+        in: query
+        name: max
+        type: number
+      - description: Bearer JWT для определения владельца
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ds.TelescopeSerializer'
+            type: array
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+        "503":
+          description: Service Unavailable
+      summary: Список опубликованных телескопов
+      tags:
+      - Телескопы
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Название
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Изображение до 5 МиБ
+        in: formData
+        name: image
+        type: file
+      - description: Видео до 50 МиБ
+        in: formData
+        name: video
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              description: Адрес черновика
+              type: string
+          schema:
+            $ref: '#/definitions/ds.TelescopeSerializer'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "409":
+          description: Conflict
+        "413":
+          description: Request Entity Too Large
+        "415":
+          description: Unsupported Media Type
+        "500":
+          description: Internal Server Error
+        "503":
+          description: Service Unavailable
+      security:
+      - BearerAuth: []
+      summary: Создание черновика
+      tags:
+      - Телескопы
+  /telescopes/{id}:
+    delete:
+      parameters:
+      - description: ID телескопа
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "409":
+          description: Conflict
+        "500":
+          description: Internal Server Error
+        "503":
+          description: Service Unavailable
+      security:
+      - BearerAuth: []
+      summary: Логическое удаление своего телескопа
+      tags:
+      - Телескопы
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID телескопа
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Описание и координаты
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ds.PublishTelescopeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ds.TelescopeSerializer'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "409":
+          description: Conflict
+        "413":
+          description: Request Entity Too Large
+        "415":
+          description: Unsupported Media Type
+        "500":
+          description: Internal Server Error
+        "503":
+          description: Service Unavailable
+      security:
+      - BearerAuth: []
+      summary: Публикация своего черновика
+      tags:
+      - Телескопы
+  /telescopes/{id}/likes:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID телескопа
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 1 — поставить, 0 — отменить
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ds.LikeTelescopeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ds.LikeTelescopeResponse'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "413":
+          description: Request Entity Too Large
+        "415":
+          description: Unsupported Media Type
+        "500":
+          description: Internal Server Error
+        "503":
+          description: Service Unavailable
+      security:
+      - BearerAuth: []
+      summary: Установка или отмена лайка
+      tags:
+      - Телескопы
+  /telescopes/draft:
+    get:
+      description: Возвращает null, если черновика нет.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ds.TelescopeSerializer'
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+        "503":
+          description: Service Unavailable
+      security:
+      - BearerAuth: []
+      summary: Черновик текущего пользователя
+      tags:
+      - Телескопы
+  /telescopes/feed:
+    get:
+      parameters:
+      - description: ID карточки; без ID возвращается первая
+        in: query
+        name: id
+        type: integer
+      - description: Следующая карточка после id
+        in: query
+        name: next
+        type: boolean
+      - description: Bearer JWT для определения владельца и лайка
+        in: header
+        name: Authorization
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ds.FullTelescopeSerializer'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+        "503":
+          description: Service Unavailable
+      summary: Карточка ленты
+      tags:
+      - Телескопы
+  /users:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Логин и пароль
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ds.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/ds.User'
+        "400":
+          description: Bad Request
+        "409":
+          description: Conflict
+        "413":
+          description: Request Entity Too Large
+        "415":
+          description: Unsupported Media Type
+        "500":
+          description: Internal Server Error
+      summary: Регистрация пользователя
+      tags:
+      - Пользователи
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Логин и пароль
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ds.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/session.LoginResponse'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "413":
+          description: Request Entity Too Large
+        "415":
+          description: Unsupported Media Type
+        "500":
+          description: Internal Server Error
+      summary: Получение JWT по логину и паролю
+      tags:
+      - Пользователи
+  /users/logout:
+    post:
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "503":
+          description: Service Unavailable
+      security:
+      - BearerAuth: []
+      summary: Отзыв текущего JWT
+      tags:
+      - Пользователи
+securityDefinitions:
+  BearerAuth:
+    description: Введите Bearer, пробел и токен из POST /api/users/login.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

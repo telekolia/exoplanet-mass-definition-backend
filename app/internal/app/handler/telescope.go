@@ -3,6 +3,7 @@ package handler
 import (
 	"app/internal/app/ds"
 	"app/internal/app/media"
+	"app/internal/app/redis"
 	"app/internal/app/repository"
 	"app/internal/app/session"
 	"errors"
@@ -23,18 +24,17 @@ import (
 type Handler struct {
 	Repository *repository.Repository
 	tokens     *session.Tokens
+	blacklist  *redis.Client
 }
 
-func NewHandler(r *repository.Repository, tokens *session.Tokens) *Handler {
-	return &Handler{Repository: r, tokens: tokens}
+func NewHandler(r *repository.Repository, tokens *session.Tokens, blacklist *redis.Client) *Handler {
+	return &Handler{Repository: r, tokens: tokens, blacklist: blacklist}
 }
 
-func (h *Handler) RegisterHandler(router *gin.Engine) {
+func (h *Handler) RegisterHandler(router *gin.Engine, optionalAuth, requireAuth gin.HandlerFunc) {
 	binding.EnableDecoderDisallowUnknownFields = true
 	router.HandleMethodNotAllowed = true
 	api := router.Group("/api")
-	optionalAuth := h.authenticate(false)
-	requireAuth := h.authenticate(true)
 	api.GET("/telescopes", optionalAuth, h.GetTelescopesAPI)
 	api.GET("/telescopes/feed", optionalAuth, h.GetTelescopeFeedAPI)
 	api.GET("/telescopes/draft", requireAuth, h.GetTelescopeDraftAPI)
@@ -113,6 +113,7 @@ func (h *Handler) bindJSON(ctx *gin.Context, request interface{}) bool {
 // @Success 200 {array} ds.TelescopeSerializer
 // @Failure 400
 // @Failure 401
+// @Failure 403
 // @Failure 500
 // @Failure 503
 // @Router /telescopes [get]
@@ -153,7 +154,7 @@ func (h *Handler) GetTelescopesAPI(ctx *gin.Context) {
 		h.repositoryError(ctx, err)
 		return
 	}
-	userID := currentUserID(ctx)
+	userID := session.CurrentUserID(ctx)
 	data := make([]ds.TelescopeSerializer, 0, len(telescopes))
 	for _, telescope := range telescopes {
 		item := h.serializeTelescope(telescope, userID, counts[telescope.ID])
@@ -171,6 +172,7 @@ func (h *Handler) GetTelescopesAPI(ctx *gin.Context) {
 // @Success 200 {object} ds.FullTelescopeSerializer
 // @Failure 400
 // @Failure 401
+// @Failure 403
 // @Failure 404
 // @Failure 500
 // @Failure 503
@@ -202,7 +204,7 @@ func (h *Handler) GetTelescopeFeedAPI(ctx *gin.Context) {
 		h.repositoryError(ctx, err)
 		return
 	}
-	userID := currentUserID(ctx)
+	userID := session.CurrentUserID(ctx)
 	count, err := h.Repository.GetTelescopeLikesCount(ctx.Request.Context(), telescope.ID)
 	if err != nil {
 		h.repositoryError(ctx, err)
@@ -231,11 +233,12 @@ func (h *Handler) GetTelescopeFeedAPI(ctx *gin.Context) {
 // @Security BearerAuth
 // @Success 200 {object} ds.TelescopeSerializer
 // @Failure 401
+// @Failure 403
 // @Failure 500
 // @Failure 503
 // @Router /telescopes/draft [get]
 func (h *Handler) GetTelescopeDraftAPI(ctx *gin.Context) {
-	userID := currentUserID(ctx)
+	userID := session.CurrentUserID(ctx)
 	telescope, err := h.Repository.GetTelescopeDraft(ctx.Request.Context(), userID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusOK, nil)
@@ -261,6 +264,7 @@ func (h *Handler) GetTelescopeDraftAPI(ctx *gin.Context) {
 // @Header 201 {string} Location "Адрес черновика"
 // @Failure 400
 // @Failure 401
+// @Failure 403
 // @Failure 404
 // @Failure 409
 // @Failure 413
@@ -312,7 +316,7 @@ func (h *Handler) CreateTelescopeDraftAPI(ctx *gin.Context) {
 	if !ok {
 		return
 	}
-	userID := currentUserID(ctx)
+	userID := session.CurrentUserID(ctx)
 	telescope, err := h.Repository.CreateDraftTelescope(ctx.Request.Context(), userID, title, image, video)
 	if err != nil {
 		h.repositoryError(ctx, err)
@@ -375,7 +379,7 @@ func (h *Handler) PublishTelescopeAPI(ctx *gin.Context) {
 		h.errorHandler(ctx, http.StatusBadRequest, errors.New("описание не может быть пустым"))
 		return
 	}
-	userID := currentUserID(ctx)
+	userID := session.CurrentUserID(ctx)
 	telescope, err := h.Repository.PublishTelescope(ctx.Request.Context(), id, userID, request.Description, *request.Latitude, *request.Longitude)
 	if err != nil {
 		h.repositoryError(ctx, err)
@@ -403,7 +407,7 @@ func (h *Handler) DeleteTelescopeAPI(ctx *gin.Context) {
 	if !ok {
 		return
 	}
-	userID := currentUserID(ctx)
+	userID := session.CurrentUserID(ctx)
 	if err := h.Repository.DeleteTelescope(ctx.Request.Context(), id, userID); err != nil {
 		h.repositoryError(ctx, err)
 		return
@@ -421,6 +425,7 @@ func (h *Handler) DeleteTelescopeAPI(ctx *gin.Context) {
 // @Success 200 {object} ds.LikeTelescopeResponse
 // @Failure 400
 // @Failure 401
+// @Failure 403
 // @Failure 404
 // @Failure 413
 // @Failure 415
@@ -436,7 +441,7 @@ func (h *Handler) LikeTelescopeAPI(ctx *gin.Context) {
 	if !h.bindJSON(ctx, &request) {
 		return
 	}
-	userID := currentUserID(ctx)
+	userID := session.CurrentUserID(ctx)
 	count, err := h.Repository.SetTelescopeLike(ctx.Request.Context(), id, userID, *request.Like)
 	if err != nil {
 		h.repositoryError(ctx, err)

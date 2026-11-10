@@ -56,7 +56,7 @@
 
 ### Авторизация и Swagger
 
-Список телескопов и лента доступны гостю. Для черновика, создания, публикации, удаления, лайков и выхода нужен заголовок `Authorization: Bearer <токен>`. Вход и регистрация доступны без токена. Создатель карточки определяется по JWT.
+Список телескопов и лента доступны гостю. Для черновика, создания, публикации, удаления, лайков и выхода нужен заголовок `Authorization: Bearer <токен>` с ролью создателя. Вход и регистрация доступны без токена. Владелец карточки определяется по `user_id` из JWT.
 
 Добавьте в `app/.env` переменную `JWT_SECRET` со случайным секретом длиной не менее 32 байт. Redis по умолчанию доступен на `127.0.0.1:6379`; для другого подключения задайте `REDIS_HOST`, `REDIS_PORT` и при необходимости `REDIS_USER`, `REDIS_PASSWORD`.
 
@@ -65,5 +65,5 @@
 Обновление Swagger из аннотаций (из папки `app`):
 
 ```powershell
-go run github.com/swaggo/swag/cmd/swag@v1.16.6 init -g cmd/app/main.go --parseInternal --outputTypes json -o internal/app/handler/swagger
+go run github.com/swaggo/swag/cmd/swag@v1.16.6 init -g cmd/app/main.go --parseInternal
 ```

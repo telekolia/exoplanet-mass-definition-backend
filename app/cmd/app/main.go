@@ -4,16 +4,15 @@ import (
 	"app/internal/app/config"
 	"app/internal/app/dsn"
 	"app/internal/app/handler"
+	"app/internal/app/redis"
 	"app/internal/app/repository"
 	"app/internal/app/session"
-	"app/internal/pkg"
-	"net"
+	"app/internal/pkg/app"
+	"context"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
 )
 
@@ -52,26 +51,18 @@ func main() {
 		logrus.Fatalf("error initializing repository: %v", errRep)
 	}
 
-	redisHost := os.Getenv("REDIS_HOST")
-	if redisHost == "" {
-		redisHost = "127.0.0.1"
-	}
-	redisPort := os.Getenv("REDIS_PORT")
-	if redisPort == "" {
-		redisPort = "6379"
-	}
-	tokens, err := session.NewTokens(os.Getenv("JWT_SECRET"), &redis.Options{
-		Addr:     net.JoinHostPort(redisHost, redisPort),
-		Username: os.Getenv("REDIS_USER"), Password: os.Getenv("REDIS_PASSWORD"),
-		DialTimeout: 3 * time.Second, ReadTimeout: 3 * time.Second, WriteTimeout: 3 * time.Second,
-	})
+	tokens, err := session.NewTokens(conf.JWT.Secret, conf.JWT.ExpiresIn)
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	defer tokens.Close()
+	blacklist, err := redis.New(context.Background(), conf.Redis)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer blacklist.Close()
 
-	hand := handler.NewHandler(rep, tokens)
+	hand := handler.NewHandler(rep, tokens, blacklist)
 
-	application := pkg.NewApp(conf, router, hand)
+	application := app.NewApp(conf, router, hand, tokens, blacklist)
 	application.RunApp()
 }

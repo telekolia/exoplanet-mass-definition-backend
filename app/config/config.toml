@@ -1,2 +1,10 @@
 ServiceHost = "0.0.0.0"
 ServicePort = 80
+
+[JWT]
+ExpiresIn = "1h"
+
+[Redis]
+DialTimeout = "3s"
+ReadTimeout = "3s"
+WriteTimeout = "3s"

@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1" pages="2">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1" pages="3">
   <diagram name="ER" id="fRkNSfgUqatwOB1YeCLC">
     <mxGraphModel dx="790" dy="542" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -460,6 +460,163 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="488" y="907" as="sourcePoint" />
             <mxPoint x="468" y="1065" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="vSlrRdc_XGvLBFhJyVI7" name="Sequense diagram">
+    <mxGraphModel dx="298" dy="605" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="583" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-58" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=14;fontStyle=1;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;glass=0;rounded=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="Клиент" vertex="1">
+          <mxGeometry height="870" width="100" x="593" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-59" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=14;fontStyle=1;labelBackgroundColor=none;labelBorderColor=none;" value=": Домен&lt;div&gt;users&lt;/div&gt;" vertex="1">
+          <mxGeometry height="870" width="100" x="1053" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-60" parent="UuXx2rTcAQdd5VUcQOcW-59" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};strokeWidth=1;" value="" vertex="1">
+          <mxGeometry height="30" width="10" x="45" y="85" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-61" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=14;fontStyle=1;labelBackgroundColor=none;labelBorderColor=none;" value=": Домен&lt;div&gt;telescopes&lt;/div&gt;" vertex="1">
+          <mxGeometry height="870" width="100" x="1293" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-62" parent="UuXx2rTcAQdd5VUcQOcW-61" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="30" width="10" x="45" y="176" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-63" parent="UuXx2rTcAQdd5VUcQOcW-61" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="29" width="10" x="45" y="268" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-64" parent="UuXx2rTcAQdd5VUcQOcW-61" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="29" width="10" x="45" y="357" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-65" parent="UuXx2rTcAQdd5VUcQOcW-61" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="29" width="10" x="45" y="448" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-66" parent="UuXx2rTcAQdd5VUcQOcW-61" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="29" width="10" x="45" y="538" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-67" parent="UuXx2rTcAQdd5VUcQOcW-61" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="29" width="10" x="45" y="627" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-68" parent="UuXx2rTcAQdd5VUcQOcW-61" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;sequenceEdgeStyle&quot;,&quot;libavoidRouting&quot;:0,&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="29" width="10" x="45" y="717" as="geometry" />
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-69" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-60" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;edgeStyle=sequenceEdgeStyle;libavoidRouting=0;curved=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-58" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;200 {access_token, token_type, expires_in}&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880.25" y="165" />
+            </Array>
+            <mxPoint x="928" y="235" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-70" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-58" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=sequenceEdgeStyle;libavoidRouting=0;curved=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-60" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;POST /api/users/login {login, password}&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0121" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="880.25" y="135" />
+            </Array>
+            <mxPoint x="928" y="165" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-71" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-58" style="html=1;verticalAlign=bottom;endArrow=block;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;GET api/telescopes?min={min}&amp;amp;max={max}&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0085" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1228" y="225" as="sourcePoint" />
+            <mxPoint x="1338" y="226" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-72" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-58" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;200 [список опубликованных телескопов]&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1338" y="256" as="sourcePoint" />
+            <mxPoint x="1228" y="295" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-73" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-58" style="html=1;verticalAlign=bottom;endArrow=block;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;POST /api/telescopes {title, image, video, Bearer token}&lt;/span&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1228" y="255" as="sourcePoint" />
+            <mxPoint x="1338" y="318" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-74" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-58" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;201 Telescope{id, status, title, image_url, video_url, creation_time, ...}&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.0084" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1338" y="347" as="sourcePoint" />
+            <mxPoint x="1228" y="325" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-75" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-58" style="html=1;verticalAlign=bottom;endArrow=block;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;GET /api/telescopes/draft{Bearer token}&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0085" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <mxPoint x="1228" y="405" as="sourcePoint" />
+            <mxPoint x="1338" y="407" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-76" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-58" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px; font-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; text-align: center; text-indent: 0px; text-transform: none; white-space: nowrap; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration: none; float: none; display: inline !important;&quot;&gt;200 [поля черновика]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.0079" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1338" y="436" as="sourcePoint" />
+            <mxPoint x="1228" y="475" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-77" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-58" style="html=1;verticalAlign=bottom;endArrow=block;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=13;" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 18px;&quot;&gt;PUT /api/telescopes/:id {description, latitude, longitude, Bearer token}&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0101" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1228" y="545" as="sourcePoint" />
+            <mxPoint x="1338" y="498" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-78" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-58" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;200 [поля опубликованного телескопа]&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.0085" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1338" y="527" as="sourcePoint" />
+            <mxPoint x="1228" y="615" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-79" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-58" style="html=1;verticalAlign=bottom;endArrow=block;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;GET /api/telescopes/feed&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0085" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <mxPoint x="1228" y="665" as="sourcePoint" />
+            <mxPoint x="1338" y="588" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-80" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-58" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;200 Telescope{id, name, ...}&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.0085" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1338" y="617" as="sourcePoint" />
+            <mxPoint x="1228" y="735" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-81" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-58" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=sequenceEdgeStyle;libavoidRouting=0;curved=0;rounded=0;labelBackgroundColor=default;fontSize=14;" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;GET /api/telescopes/feed?id={id}&amp;amp;next={is_next}&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0085" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <Array as="points">
+              <mxPoint x="980.25" y="675" />
+            </Array>
+            <mxPoint x="1228" y="785" as="sourcePoint" />
+            <mxPoint x="1338" y="677" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-82" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-58" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;200 Telescope{id, name, ...}&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.0085" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1338" y="706" as="sourcePoint" />
+            <mxPoint x="1228" y="855" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-83" edge="1" parent="1" source="UuXx2rTcAQdd5VUcQOcW-58" style="html=1;verticalAlign=bottom;endArrow=block;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;POST /api/telescopes/13/likes {like: 1, Bearer token}&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.0085" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <mxPoint x="1228" y="695" as="sourcePoint" />
+            <mxPoint x="1338" y="767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UuXx2rTcAQdd5VUcQOcW-84" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;libavoidRouting=0;rounded=0;labelBackgroundColor=default;fontSize=14;" target="UuXx2rTcAQdd5VUcQOcW-58" value="&lt;span style=&quot;caret-color: rgb(40, 37, 61); color: rgb(40, 37, 61); font-family: Recursive; font-size: 19px;&quot;&gt;200&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.0085" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1338" y="796" as="sourcePoint" />
+            <mxPoint x="1228" y="765" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
