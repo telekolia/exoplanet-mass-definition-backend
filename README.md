@@ -53,5 +53,5 @@
 Обновление Swagger из аннотаций (из папки `app`):
 
 ```powershell
-go run github.com/swaggo/swag/cmd/swag@v1.16.6 init -g cmd/app/main.go --parseInternal
+swag init -g cmd/app/main.go --parseInternal
 ```
